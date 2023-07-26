@@ -26,3 +26,36 @@
       until: docker_jobs.finished
       retries: 100
       with_items: "{{ platform.results }}"
+
+    - name: Gather info about created containers
+      community.docker.docker_container_info:
+        name: "{{ job_result.item.name }}"
+      register: container_info
+      with_items: "{{ platform.results }}"
+      loop_control:
+        loop_var: job_result
+        label: "{{ job_result.item.name }}"
+
+    - name: Populate instance config
+      ansible.builtin.set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.name }}",
+          'image': "docker.io/library/{{ item.image }}:{{ item.tag }}",
+          'tag': "{{ item.tag }}",
+          'ID': "{{ container_info.results[i].container.Id }}"
+        }
+      with_items: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
+        index_var: i
+      register: instance_config_dict
+
+    - name: Convert instance config dict to a list
+      ansible.builtin.set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+
+    - name: Dump instance config
+      ansible.builtin.copy:
+        content: "{{ instance_conf | to_json | from_json | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+        mode: 0600
