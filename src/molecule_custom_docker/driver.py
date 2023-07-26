@@ -24,3 +24,7 @@ class CustomDocker(Driver):
     @property
     def required_collections(self):
         return {"community.docker": "3.4.6"}
+
+    def ansible_connection_options(self, instance_name):
+        x = {"ansible_connection": "community.docker.docker"}
+        return x
