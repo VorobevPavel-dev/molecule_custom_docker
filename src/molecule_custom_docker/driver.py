@@ -28,3 +28,17 @@ class CustomDocker(Driver):
     def ansible_connection_options(self, instance_name):
         x = {"ansible_connection": "community.docker.docker"}
         return x
+
+    def login_options(self, instance_name):
+        return {"instance": instance_name}
+
+    @property
+    def login_cmd_template(self):
+        return (
+            "docker exec "
+            "-e COLUMNS={columns} "
+            "-e LINES={lines} "
+            "-e TERM=bash "
+            "-e TERM=xterm "
+            "-ti {instance} bash"
+        )
