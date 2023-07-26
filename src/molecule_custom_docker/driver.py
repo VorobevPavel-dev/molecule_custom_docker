@@ -16,3 +16,11 @@ class CustomDocker(Driver):
     @name.setter
     def name(self, value):
         self._name = value
+
+    @property
+    def default_safe_files(self):
+        return []
+
+    @property
+    def required_collections(self):
+        return {"community.docker": "3.4.6"}

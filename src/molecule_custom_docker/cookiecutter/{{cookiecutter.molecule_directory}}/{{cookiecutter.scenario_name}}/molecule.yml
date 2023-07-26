@@ -1,0 +1,13 @@
+---
+dependency:
+  name: {{cookiecutter.dependency_name}}
+driver:
+  name: {{cookiecutter.driver_name}}
+platforms:
+  - name: molecule-{{cookiecutter.role_name}}
+    image: python
+    tag: 3.10-slim-buster
+provisioner:
+  name: {{cookiecutter.provisioner_name}}
+verifier:
+  name: {{cookiecutter.verifier_name}}
